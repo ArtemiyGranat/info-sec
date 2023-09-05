@@ -1,7 +1,11 @@
-.PHONY: clean
+.PHONY: clean test
 CFLAGS=-O2 -Wall -Wpedantic -Wextra
 
-main: main.o
+all: put-message get-message
+
+put-message: put-message.o
+
+get-message: get-message.o
 
 clean:
-	${RM} main *.o
+	${RM} put-message get-message *.o
