@@ -12,7 +12,7 @@ type Server struct {
 }
 
 type Config struct {
-	Server `yaml:"http_server"`
+	Server `yaml:"server"`
 }
 
 func ReadConfig() (*Config, error) {

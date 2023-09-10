@@ -1,9 +1,15 @@
 package routes
 
-import "github.com/gin-gonic/gin"
+import (
+	"info-sec-api/internal/handlers"
+
+	"github.com/gin-gonic/gin"
+)
 
 func configureRoutes(router *gin.Engine) {
-	
+	router.POST("/registrate", handlers.RegistrateHandler)
+	router.POST("/refresh", handlers.RefreshHandler)
+	router.POST("/auth", handlers.AuthHandler)
 }
 
 func SetupRouter() *gin.Engine {
