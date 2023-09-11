@@ -12,7 +12,8 @@ type Server struct {
 }
 
 type Config struct {
-	Server `yaml:"server"`
+	DbPath  string `yaml:"db-path"`
+	Server         `yaml:"server"`
 }
 
 func ReadConfig() (*Config, error) {
