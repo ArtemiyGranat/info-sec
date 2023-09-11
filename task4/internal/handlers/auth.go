@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	storage "info-sec-api/internal/storage/auth"
-	crypt "info-sec-api/internal/utils"
+	"info-sec-api/internal/storage"
+	"info-sec-api/internal/utils"
 	"log"
 	"net/http"
 
@@ -23,7 +23,7 @@ func AuthHandler(db *mongo.Database) gin.HandlerFunc {
 			return
 		}
 
-		err = crypt.VerifyPassword(user, password)
+		err = utils.VerifyPassword(user, password)
 		if err != nil {
 			c.String(http.StatusForbidden, "Incorrect username or password")
 			return

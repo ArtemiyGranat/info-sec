@@ -10,7 +10,7 @@ import (
 )
 
 func RegistrateUser(db *mongo.Database, user models.User) error {
-	collection := db.Collection("users")
+	collection := db.Collection(Users)
 
 	_, err := collection.InsertOne(context.Background(), user)
 	if err != nil {
@@ -21,7 +21,7 @@ func RegistrateUser(db *mongo.Database, user models.User) error {
 }
 
 func AuthUser(db *mongo.Database, username string) (*models.User, error) {
-	collection := db.Collection("users")
+	collection := db.Collection(Users)
 	filter := bson.M{"username": username}
 	options := options.FindOne()
 	

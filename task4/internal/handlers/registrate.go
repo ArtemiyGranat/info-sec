@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"info-sec-api/internal/models"
-	storage "info-sec-api/internal/storage/auth"
-	crypt "info-sec-api/internal/utils"
+	"info-sec-api/internal/storage"
+	"info-sec-api/internal/utils"
 	"log"
 	"net/http"
 
@@ -17,11 +17,11 @@ func RegistrateHandler(db *mongo.Database) gin.HandlerFunc {
 		username := c.PostForm("usr")
 		password := c.PostForm("passwd")
 	
-		salt, err := crypt.GenerateSalt()
+		salt, err := utils.GenerateSalt()
 		if err != nil {
 			log.Fatalf("Could not generate a salt for a password: %v", err)
 		}
-		hashedPassword, err := crypt.HashPassword(password, salt)
+		hashedPassword, err := utils.HashPassword(password, salt)
 		if err != nil {
 			log.Fatalf("Could not hash a password: %v", err)
 		}
