@@ -9,8 +9,8 @@ import (
 )
 
 var (
-    jwtSecretKey    = os.Getenv("JWT_SECRET_KEY")
-    AccessTokenTTL  = 24 * time.Hour
+    jwtSecretKey    = []byte(os.Getenv("JWT_SECRET_KEY"))
+    AccessTokenTTL  = 1 * time.Minute
     RefreshTokenTTL = 30 * 24 * time.Hour
 )
 
@@ -53,6 +53,7 @@ func ValidateToken(tokenString string) (*jwt.Token, error) {
     if err != nil {
         return nil, errors.New("Could not get an expiration time")
     }
+
     if expirationTime.Unix() < time.Now().Local().Unix() {
         return nil, errors.New("JWT is expired")
     }

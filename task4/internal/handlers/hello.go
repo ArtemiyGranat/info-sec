@@ -20,6 +20,7 @@ func HelloHandler(c *gin.Context) {
 	_, err = utils.ValidateToken(accessTokenString)
 	if err != nil {
 		c.String(http.StatusForbidden, "Invalid access token")
+		return
 	}
 
 	c.String(http.StatusOK, "Hello, InfoSec!")	

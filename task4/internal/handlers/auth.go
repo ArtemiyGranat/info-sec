@@ -12,8 +12,12 @@ import (
 
 func AuthHandler(db *mongo.Database, address string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		username := c.PostForm("usr")
-		password := c.PostForm("passwd")
+		username := c.Query("usr")
+		password := c.Query("passwd")
+		if username == "" || password == "" {
+			c.String(http.StatusForbidden, "Invalid username or password")
+			return
+		}
 
 		user, err := storage.AuthUser(db, username)
 		// TODO: How should I handle errors other than mongo.ErrNoDocuments?
@@ -22,7 +26,7 @@ func AuthHandler(db *mongo.Database, address string) gin.HandlerFunc {
 			c.String(http.StatusForbidden, "Incorrect username or password")
 			return
 		}
-		
+
 		err = utils.VerifyPassword(user, password)
 		if err != nil {
 			c.String(http.StatusForbidden, "Incorrect username or password")

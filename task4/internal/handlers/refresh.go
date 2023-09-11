@@ -22,10 +22,12 @@ func RefreshHandler(db *mongo.Database, address string) gin.HandlerFunc {
 		refreshToken, err := utils.ValidateToken(refreshTokenString)
 		if err != nil {
 			c.String(http.StatusForbidden, "Invalid refresh token")
+			return
 		}
 		username, err := refreshToken.Claims.GetSubject()
 		if err != nil {
 			c.String(http.StatusForbidden, "Invalid claims in refresh token")
+			return
 		}
 
 		accessTokenString := utils.NewAccessToken(username)
