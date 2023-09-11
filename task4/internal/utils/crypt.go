@@ -1,8 +1,8 @@
 package crypt
 
 import (
-	// "bytes"
 	"crypto/rand"
+	"info-sec-api/internal/models"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -26,15 +26,6 @@ func HashPassword(password string, salt []byte) ([]byte, error) {
     return hashedPassword, nil
 }
 
-// func VerifyPassword(username, password string) (bool, error) {
-//     // Retrieve the user's data (salt and hashed password) from the database
-//     // (You will need to implement database interaction here)
-
-//     // Compare the provided password with the stored values
-//     hashedPassword, err := hashPassword(password, retrievedSalt)
-//     if err != nil {
-//         return false, err
-//     }
-
-//     return bytes.Equal(hashedPassword, retrievedHashedPassword), nil
-// }
+func VerifyPassword(user *models.User, password string) error {
+    return bcrypt.CompareHashAndPassword(user.Password, []byte(password + string(user.Salt)))
+}

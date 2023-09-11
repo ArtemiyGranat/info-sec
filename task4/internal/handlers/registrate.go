@@ -14,8 +14,8 @@ import (
 
 func RegistrateHandler(db *mongo.Database) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		username := c.Query("usr")
-		password := c.Query("passwd")
+		username := c.PostForm("usr")
+		password := c.PostForm("passwd")
 	
 		salt, err := crypt.GenerateSalt()
 		if err != nil {
@@ -28,10 +28,10 @@ func RegistrateHandler(db *mongo.Database) gin.HandlerFunc {
 	
 		user := models.User { Username: username, Salt: salt, Password: hashedPassword }
 		if err := storage.RegistrateUser(db, user); err != nil {
-			c.String(http.StatusBadRequest, "Could not register a user: %v", err)
-		} else {
-			c.String(http.StatusOK, "User has been registered successfully")
-		}
+			c.String(http.StatusBadRequest, "Could not register a user")
+			return
+		} 
 	
+		c.String(http.StatusOK, "User has been registered successfully")	
 	}
 }

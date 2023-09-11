@@ -1,6 +1,9 @@
 package handlers
 
 import (
+	storage "info-sec-api/internal/storage/auth"
+	crypt "info-sec-api/internal/utils"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,6 +12,23 @@ import (
 
 func AuthHandler(db *mongo.Database) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.String(http.StatusOK, "OK")
+		username := c.PostForm("usr")
+		password := c.PostForm("passwd")
+
+		user, err := storage.AuthUser(db, username)
+		// TODO: How should I handle errors other than mongo.ErrNoDocuments?
+		if err != nil {
+			log.Printf("Could not find user with given username: %v", err)
+			c.String(http.StatusForbidden, "Incorrect username or password")
+			return
+		}
+
+		err = crypt.VerifyPassword(user, password)
+		if err != nil {
+			c.String(http.StatusForbidden, "Incorrect username or password")
+			return
+		}
+
+		c.String(http.StatusOK, "Correct password")
 	}
 }

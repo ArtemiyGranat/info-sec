@@ -2,8 +2,8 @@ package storage
 
 import (
 	"context"
-	"log"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -16,15 +16,17 @@ func Connect(storagePath string) (*mongo.Database, error) {
 	clientOptions := options.Client().ApplyURI(storagePath)
 	client, err := mongo.Connect(context.TODO(), clientOptions)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	
 	err = client.Ping(context.TODO(), nil)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	db := client.Database(DbName)
+
+	_, err = db.Collection("users").DeleteMany(context.Background(), bson.M{})
 	return db, nil
 }
 
