@@ -3,6 +3,7 @@ package main
 import (
 	"info-sec-api/internal/config"
 	"info-sec-api/internal/routes"
+	"info-sec-api/internal/storage"
 	"log"
 
 	"github.com/joho/godotenv"
@@ -10,18 +11,24 @@ import (
 
 func run() error {
 	if err := godotenv.Load(); err != nil {
-		log.Fatalf("Could not load .env file: %v", err)
+		return err
 	}
 
 	cfg, err := config.ReadConfig()
 	if err != nil {
-		log.Fatalf("Could not read config file: %v", err)
+		return err
 	}
 
-	router := routes.SetupRouter()
+	db, err := storage.Connect(cfg.DbPath)
+	if err != nil {
+		return err
+	}
+	defer storage.Close(db)
+
+	router := routes.SetupRouter(db)
 	err = router.Run(cfg.Address)
 	if err != nil {
-		log.Fatalf("Could not start server: %v", err)
+		return err
 	}
 
 	return nil
@@ -29,8 +36,6 @@ func run() error {
 
 func main() {
 	if err := run(); err != nil {
-		log.Fatalf("Could not run the server: %v\n", err)
+		log.Printf("Could not run the server: %v\n", err)
 	}
-
-	return
 }

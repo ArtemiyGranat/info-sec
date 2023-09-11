@@ -1,7 +1,6 @@
 package config
 
 import (
-	"log"
 	"os"
 
 	"github.com/ilyakaznacheev/cleanenv"
@@ -12,7 +11,8 @@ type Server struct {
 }
 
 type Config struct {
-	Server `yaml:"server"`
+	DbPath  string `yaml:"db-path"`
+	Server         `yaml:"server"`
 }
 
 func ReadConfig() (*Config, error) {
@@ -20,7 +20,7 @@ func ReadConfig() (*Config, error) {
 	var cfg Config
 
 	if err := cleanenv.ReadConfig(configPath, &cfg); err != nil {
-		log.Fatalf("Could not read the config file %s: %v", configPath, err.Error())
+		return nil, err
 	}
 
 	return &cfg, nil
