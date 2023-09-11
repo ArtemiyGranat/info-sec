@@ -1,0 +1,6 @@
+*.o
+put-message
+get-message
+__pycache__
+.pytest_cache
+container.txt

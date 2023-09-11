@@ -6,9 +6,9 @@
 #define USAGE()                                                               \
   printf ("Usage: %s [-m <MESSAGE>] [-s <STEGO>] [-h] -c <CONTAINER>\n\n"     \
           "Options:\n"                                                        \
-          "-m, --message <MESSAGE> — the message path,\n"                     \
-          "-s, --stego <STEGO> — the stegocontainer path,\n"                  \
-          "-c, --container <CONTAINER> — the container path,\n"               \
+          "-m, --message <MESSAGE> — the message path,\n"                   \
+          "-s, --stego <STEGO> — the stegocontainer path,\n"                \
+          "-c, --container <CONTAINER> — the container path,\n"             \
           "-h, --help — print help\n",                                        \
           argv[0])
 
@@ -19,15 +19,13 @@ typedef struct config_t
   char *container;
 } config_t;
 
-
-
 void
 put_message (config_t *config)
 {
   FILE *container_fp = NULL, *message_fp = NULL, *stego_fp = NULL;
-  container_fp = fopen (config->container, "r");
-  message_fp = (config->message) ? fopen (config->message, "r") : stdin;
-  stego_fp = (config->stego) ? fopen (config->stego, "w") : stdout;
+  container_fp = fopen (config->container, "rb");
+  message_fp = (config->message) ? fopen (config->message, "rb") : stdin;
+  stego_fp = (config->stego) ? fopen (config->stego, "wb") : stdout;
 
   char buff[BUFF_SIZE];
   int bits[BITS_PER_BYTE];
@@ -37,10 +35,11 @@ put_message (config_t *config)
       buff[strcspn (buff, "\n")] = 0;
       if (idx == BITS_PER_BYTE)
         {
-          if (!feof (message_fp)) {
-            char_to_bits (fgetc (message_fp), bits);
-            idx = 0;
-          }
+          if (!feof (message_fp))
+            {
+              char_to_bits (fgetc (message_fp), bits);
+              idx = 0;
+            }
         }
 
       fputs (buff, stego_fp);

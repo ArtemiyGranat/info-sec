@@ -6,8 +6,8 @@
 #define USAGE()                                                               \
   printf ("Usage: %s [-m <MESSAGE>] [-s <STEGO>] [-h]\n\n"                    \
           "Options:\n"                                                        \
-          "-m, --message <MESSAGE> — the message path,\n"                     \
-          "-s, --stego <STEGO> — the stegocontainer path,\n"                  \
+          "-m, --message <MESSAGE> — the message path,\n"                   \
+          "-s, --stego <STEGO> — the stegocontainer path,\n"                \
           "-h, --help — print help\n",                                        \
           argv[0])
 
@@ -21,8 +21,8 @@ void
 get_message (config_t *config)
 {
   FILE *stego_fp = NULL, *message_fp = NULL;
-  stego_fp = (config->stego) ? fopen (config->stego, "r") : stdin;
-  message_fp = (config->message) ? fopen (config->message, "w") : stdout;
+  stego_fp = (config->stego) ? fopen (config->stego, "rb") : stdin;
+  message_fp = (config->message) ? fopen (config->message, "wb") : stdout;
 
   char buff[BUFF_SIZE];
   int bits[BITS_PER_BYTE];
@@ -30,14 +30,12 @@ get_message (config_t *config)
   char ch;
   while (fgets (buff, BUFF_SIZE, stego_fp) != NULL)
     {
-      printf ("%d", buff[strcspn (buff, "\n") - 1] == ' ');
       bits[idx] = buff[strcspn (buff, "\n") - 1] == ' ';
       ++idx;
 
       if (idx == BITS_PER_BYTE)
         {
-          ch = bits_to_char (ch, bits);
-          printf ("%c", ch);
+          bits_to_char (&ch, bits);
           if (ch)
             {
               idx = 0;
