@@ -31,10 +31,9 @@ func AuthHandler(db *mongo.Database, address string) gin.HandlerFunc {
 		
 		accessTokenString := utils.NewAccessToken(username)
 		refreshTokenString := utils.NewRefreshToken(username)
-		
 		c.SetCookie("Access-Token", accessTokenString, int(utils.AccessTokenTTL.Seconds()), "/", address, true, true)
 		c.SetCookie("Refresh-Token", refreshTokenString, int(utils.RefreshTokenTTL.Seconds()), "/", address, true, true)
-		
+
 		c.String(http.StatusOK, "Authentification successful")
 	}
 }

@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"os"
 	"time"
 
@@ -9,8 +10,8 @@ import (
 
 var (
     jwtSecretKey    = os.Getenv("JWT_SECRET_KEY")
-    AccessTokenTTL  = 15 * time.Minute
-    RefreshTokenTTL = 24 * time.Hour
+    AccessTokenTTL  = 24 * time.Hour
+    RefreshTokenTTL = 30 * 24 * time.Hour
 )
 
 func NewAccessToken(username string) string {
@@ -33,4 +34,20 @@ func NewRefreshToken(username string) string {
     refreshTokenString, _ := refreshToken.SignedString(jwtSecretKey)
 
 	return refreshTokenString
+}
+
+func ValidateRefreshToken(refreshTokenString string) (*jwt.Token, error) {
+	refreshToken, err := jwt.Parse(refreshTokenString, func(token *jwt.Token) (interface{}, error) {
+        return jwtSecretKey, nil
+    })
+	if err != nil {
+		return nil, err
+	}
+
+	if !refreshToken.Valid {
+		return nil, errors.New("Invalid refresh token")
+	}
+
+	return refreshToken, nil
+
 }
