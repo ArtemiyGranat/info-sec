@@ -15,39 +15,48 @@ var (
 )
 
 func NewAccessToken(username string) string {
-    accessToken := jwt.New(jwt.SigningMethodHS256)
-    accessToken.Claims = jwt.MapClaims{
+    claims := jwt.MapClaims{
         "sub": username, 
         "exp": time.Now().Add(AccessTokenTTL).Unix(),
     }
+    accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
     accessTokenString, _ := accessToken.SignedString(jwtSecretKey)
 
 	return accessTokenString
 }
 
 func NewRefreshToken(username string) string {
-    refreshToken := jwt.New(jwt.SigningMethodHS256)
-    refreshToken.Claims = jwt.MapClaims{
+    claims := jwt.MapClaims{
         "sub": username,
         "exp": time.Now().Add(RefreshTokenTTL).Unix(),
     }
+    refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
     refreshTokenString, _ := refreshToken.SignedString(jwtSecretKey)
 
 	return refreshTokenString
 }
 
-func ValidateRefreshToken(refreshTokenString string) (*jwt.Token, error) {
-	refreshToken, err := jwt.Parse(refreshTokenString, func(token *jwt.Token) (interface{}, error) {
+func ValidateToken(tokenString string) (*jwt.Token, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
         return jwtSecretKey, nil
     })
 	if err != nil {
 		return nil, err
 	}
 
-	if !refreshToken.Valid {
-		return nil, errors.New("Invalid refresh token")
+	if !token.Valid {
+		return nil, errors.New("Invalid token")
 	}
 
-	return refreshToken, nil
+    claims := token.Claims.(jwt.MapClaims)
+    expirationTime, err := claims.GetExpirationTime()
+    if err != nil {
+        return nil, errors.New("Could not get an expiration time")
+    }
+    if expirationTime.Unix() < time.Now().Local().Unix() {
+        return nil, errors.New("JWT is expired")
+    }
+
+	return token, nil
 
 }

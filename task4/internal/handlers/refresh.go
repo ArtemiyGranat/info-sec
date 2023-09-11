@@ -19,7 +19,7 @@ func RefreshHandler(db *mongo.Database, address string) gin.HandlerFunc {
 			c.String(http.StatusBadRequest, "Bad request")
 			return
 		}
-		refreshToken, err := utils.ValidateRefreshToken(refreshTokenString)
+		refreshToken, err := utils.ValidateToken(refreshTokenString)
 		if err != nil {
 			c.String(http.StatusForbidden, "Invalid refresh token")
 		}
