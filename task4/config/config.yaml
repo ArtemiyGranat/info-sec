@@ -1,3 +1,4 @@
 db-path: "mongodb://0.0.0.0:27017/"
 server:
-  address: "localhost:8080"
+  address: "localhost"
+  port:    "8080"

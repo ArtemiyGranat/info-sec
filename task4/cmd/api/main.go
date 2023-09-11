@@ -25,8 +25,8 @@ func run() error {
 	}
 	defer storage.Close(db)
 
-	router := routes.SetupRouter(db)
-	err = router.Run(cfg.Address)
+	router := routes.SetupRouter(db, cfg.Address)
+	err = router.Run(cfg.Address + ":" + cfg.Port)
 	if err != nil {
 		return err
 	}
