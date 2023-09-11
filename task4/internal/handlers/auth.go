@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func AuthHandler(db *mongo.Database) gin.HandlerFunc {
+func AuthHandler(db *mongo.Database, address string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		username := c.PostForm("usr")
 		password := c.PostForm("passwd")
@@ -22,13 +22,19 @@ func AuthHandler(db *mongo.Database) gin.HandlerFunc {
 			c.String(http.StatusForbidden, "Incorrect username or password")
 			return
 		}
-
+		
 		err = utils.VerifyPassword(user, password)
 		if err != nil {
 			c.String(http.StatusForbidden, "Incorrect username or password")
 			return
 		}
-
-		c.String(http.StatusOK, "Correct password")
+		
+		accessTokenString := utils.NewAccessToken(username)
+		refreshTokenString := utils.NewRefreshToken(username)
+		
+		c.SetCookie("Access-Token", accessTokenString, int(utils.AccessTokenTTL.Seconds()), "/", address, true, true)
+		c.SetCookie("Refresh-Token", refreshTokenString, int(utils.RefreshTokenTTL.Seconds()), "/", address, true, true)
+		
+		c.String(http.StatusOK, "Authentification successful")
 	}
 }

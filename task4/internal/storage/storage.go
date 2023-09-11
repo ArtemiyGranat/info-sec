@@ -27,8 +27,6 @@ func Connect(storagePath string) (*mongo.Database, error) {
 
 	db := client.Database(DbName)
 
-	// Only for debug, remove it later
-	// _, err = db.Collection(Users).DeleteMany(context.Background(), bson.M{})
 	return db, nil
 }
 
