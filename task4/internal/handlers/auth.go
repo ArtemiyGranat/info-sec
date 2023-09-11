@@ -3,7 +3,6 @@ package handlers
 import (
 	"info-sec-api/internal/storage"
 	"info-sec-api/internal/utils"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -19,10 +18,10 @@ func AuthHandler(db *mongo.Database, address string) gin.HandlerFunc {
 			return
 		}
 
+		// TODO: Why is it working on empty username?
 		user, err := storage.AuthUser(db, username)
 		// TODO: How should I handle errors other than mongo.ErrNoDocuments?
 		if err != nil {
-			log.Printf("Could not find user with given username: %v", err)
 			c.String(http.StatusForbidden, "Incorrect username or password")
 			return
 		}
