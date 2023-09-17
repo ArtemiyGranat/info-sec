@@ -35,11 +35,11 @@ get_message (config_t *config)
 
       if (idx == BITS_PER_BYTE)
         {
-          bits_to_char (&ch, bits);
+          ch = bits_to_char (ch, bits);
+          fputc (ch, message_fp);
           if (ch)
             {
               idx = 0;
-              fputc (ch, message_fp);
             }
         }
     }

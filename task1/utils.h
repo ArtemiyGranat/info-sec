@@ -1,9 +1,9 @@
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef UTILS_H
+#define UTILS_H
 
 #include <stdlib.h>
 
-#define BUFF_SIZE 16384
+#define BUFF_SIZE (16384 * 100)
 #define BITS_PER_BYTE 8
 
 void
@@ -15,13 +15,14 @@ char_to_bits (char ch, int *bits)
     }
 }
 
-void
-bits_to_char (char *ch, int *bits)
+char
+bits_to_char (char ch, int *bits)
 {
   for (size_t i = 0; i < BITS_PER_BYTE; ++i)
     {
-      *ch = (*ch << 1) | (bits[i] & 1);
+      ch = (ch << 1) | (bits[i] & 1);
     }
-}
 
-#endif // COMMON_H
+  return ch;
+}
+#endif // UTILS_H
